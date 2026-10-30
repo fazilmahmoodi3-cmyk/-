@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ساحات تخریبی و تحت بررسی ناحیه هفدهم</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#fba0a0;font-family:Georgia,"Segoe UI",Tahoma,"Noto Naskh Arabic",serif;color:#000;padding:15px}
+  .wrap{max-width:1100px;margin:0 auto}
+  .card{background:#f5c6c6;padding:25px 30px;margin-bottom:20px}
+  h1{text-align:center;font-style:italic;text-decoration:underline;color:#6b2c2c;font-size:26px;margin:0 0 20px}
+  h2{color:#6b2c2c;margin:0 0 15px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px 28px}
+  label{display:block;font-weight:bold;margin-bottom:6px;font-size:16px}
+  input,select,textarea{width:100%;padding:11px 12px;border:none;border-radius:5px;background:#fff;font-family:inherit;font-size:15px;color:#222}
+  input::placeholder,textarea::placeholder{color:#888}
+  textarea{resize:vertical;min-height:70px}
+  .full{grid-column:1/-1}
+  .row{display:flex;gap:8px}
+  .row input{flex:1}
+  button{font-family:inherit;font-size:16px;cursor:pointer;border:1px solid #a52a2a;border-radius:5px;padding:11px 18px;background:#a52a2a;color:#fff}
+  button:hover{background:#8c2020}
+  button.light{background:#fff;color:#a52a2a}
+  button.light:hover{background:#fbe9e9}
+  .submit{width:100%;margin-top:22px}
+  .mapbox{margin-top:10px;display:none}
+  .mapbox iframe{width:100%;height:300px;border:0;border-radius:6px;background:#fff;display:block}
+  .mapnote{font-size:13px;color:#6b2c2c;margin-top:6px}
+  tr.maprow td{background:#fff!important;padding:10px}
+  tr.maprow iframe{width:100%;height:280px;border:0;border-radius:6px}
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:15px;align-items:center}
+  .toolbar input{flex:1;min-width:200px}
+  .toolbar button{padding:10px 14px;font-size:14px}
+  .tablebox{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;background:#fff;font-size:14px;min-width:1300px}
+  th{background:#a52a2a;color:#fff;padding:10px 8px;white-space:nowrap}
+  td{padding:9px 8px;border-bottom:1px solid #eac3c3;text-align:center;vertical-align:top}
+  tr:nth-child(even) td{background:#fdf3f3}
+  td button{padding:5px 10px;font-size:13px;margin:2px}
+  a{color:#a52a2a;font-weight:bold}
+  .count{font-weight:bold;color:#6b2c2c}
+  .empty{text-align:center;padding:25px;color:#6b2c2c}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#6b2c2c;color:#fff;padding:10px 22px;border-radius:6px;display:none;z-index:9}
+  @media print{body{background:#fff}.no-print{display:none}.card{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="card no-print">
+    <h1>ساحات تخریبی و تحت بررسی ناحیه هفدهم</h1>
+    <form id="form" autocomplete="off">
+      <input type="hidden" id="editId">
+      <div class="grid">
+        <div><label>اسم مالک خانه</label><input id="ownerName" required placeholder="مثال: احمد رحیمی"></div>
+        <div><label>نمبر تماس مالک</label><input id="ownerPhone" type="tel" placeholder="07x xxx xxxx"></div>
+        <div><label>اسم کرایه نشین</label><input id="tenantName" placeholder="در صورت نبودن خالی بگذارید"></div>
+        <div><label>تعداد منزل</label><input id="floors" type="number" min="0" placeholder="مثال: 2"></div>
+        <div><label>سمت خانه</label>
+          <select id="side"><option value="">— انتخاب کنید —</option><option>چپه</option><option>راسته</option></select></div>
+        <div><label>شهرک</label><input id="town" placeholder="نام شهرک"></div>
+        <div><label>نوع ساختمان</label>
+          <select id="buildingType">
+            <option value="">— انتخاب کنید —</option><option>خشتی / گلی</option><option>پخسه</option><option>بلاک و سمنت</option><option>کانکریت (بتونی)</option><option>آپارتمان</option><option>دوکان / تجارتی</option><option>دیگر</option>
+          </select></div>
+        <div><label>نمبر کوچه</label><input id="streetNo" placeholder="مثال: 5"></div>
+        <div><label>نمبر گذر</label><input id="lane" placeholder="مثال: 3"></div>
+        <div><label>نمبر تماس وکیل گذر</label><input id="wakilPhone" type="tel" placeholder="07x xxx xxxx"></div>
+        <div class="full"><label>آدرس عمومی</label><input id="address" placeholder="ناحیه هفدهم، شهرک ... ، کوچه ... ، گذر ..."></div>
+        <div class="full"><label>لوکیشن (Google Maps)</label>
+          <div class="row">
+            <input id="location" placeholder="لینک گوگل مپ یا مختصات مثل 34.5281, 69.1723">
+            <button type="button" class="light" id="gpsBtn">📍 موقعیت فعلی</button>
+            <button type="button" class="light" id="viewMapBtn">🗺 باز کردن در گوگل مپ</button>
+          </div>
+          <div class="mapbox" id="mapBox"><iframe id="mapFrame" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>
+          <div class="mapnote" id="mapNote"></div>
+          <a id="mapLink" href="#" target="_blank" rel="noopener" style="display:none;margin-top:8px">📍 کلیک کنید تا لوکیشن مستقیم در گوگل مپ باز شود</a></div>
+        <div class="full"><label>مشخصات مسؤل ساحه مربوطه</label>
+          <textarea id="officer" placeholder="نام، وظیفه، نمبر تماس و سایر مشخصات مسؤل ساحه"></textarea></div>
+      </div>
+      <button type="submit" class="submit" id="submitBtn">ثبت</button>
+      <button type="button" class="light submit" id="cancelBtn" style="display:none">لغو ویرایش</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>لیست ساحات ثبت‌شده — <span class="count" id="count">0</span> مورد</h2>
+    <div class="toolbar no-print">
+      <input id="search" placeholder="🔍 جستجو در همه معلومات...">
+      <button class="light" id="csvBtn">⬇ خروجی Excel (CSV)</button>
+      <button class="light" id="jsonBtn">⬇ نسخه پشتیبان (JSON)</button>
+      <button class="light" id="importBtn">⬆ بازیابی</button>
+      <button class="light" id="printBtn">🖨 چاپ</button>
+      <input type="file" id="importFile" accept=".json" style="display:none">
+    </div>
+    <div class="tablebox">
+      <table>
+        <thead><tr>
+          <th>#</th><th>مالک خانه</th><th>تماس مالک</th><th>کرایه نشین</th><th>منزل</th><th>سمت</th><th>شهرک</th>
+          <th>نوع ساختمان</th><th>کوچه</th><th>گذر</th><th>تماس وکیل گذر</th><th>آدرس</th><th>لوکیشن</th><th>مسؤل ساحه</th><th class="no-print">عملیات</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="empty">تا حال معلوماتی ثبت نشده است.</div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY = "nahia17_sahat_db";
+const $ = id => document.getElementById(id);
+const fields = ["ownerName","ownerPhone","tenantName","floors","side","town","buildingType","streetNo","lane","wakilPhone","address","location","officer"];
+let db = [];
+try { db = JSON.parse(localStorage.getItem(KEY)) || []; } catch(e){ db = []; }
+
+const save = () => localStorage.setItem(KEY, JSON.stringify(db));
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function toast(m){const t=$("toast");t.textContent=m;t.style.display="block";setTimeout(()=>t.style.display="none",2000);}
+
+function mapUrl(loc){
+  loc = (loc||"").trim();
+  if(!loc) return "";
+  if(/^https?:\/\//i.test(loc)) return loc;
+  const m = loc.match(/^(-?\d+(\.\d+)?)\s*[,،\s]\s*(-?\d+(\.\d+)?)$/);
+  if(m) return "https://www.google.com/maps?q=" + m[1] + "," + m[3];
+  return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(loc);
+}
+
+// استخراج مختصات از متن یا لینک گوگل مپ
+function coordsOf(loc){
+  loc = (loc||"").trim();
+  let m = loc.match(/^(-?\d+(?:\.\d+)?)\s*[,،\s]\s*(-?\d+(?:\.\d+)?)$/);
+  if(!m) m = loc.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);
+  if(!m) m = loc.match(/[?&](?:q|ll|query|center)=(-?\d+(?:\.\d+)?)(?:,|%2C)(-?\d+(?:\.\d+)?)/i);
+  if(!m) m = loc.match(/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/);
+  return m ? m[1]+","+m[2] : "";
+}
+// آدرس قابل نمایش داخل صفحه (embed)؛ لینک‌های کوتاه قابل نمایش نیستند
+function embedUrl(loc){
+  loc = (loc||"").trim();
+  if(!loc) return "";
+  const c = coordsOf(loc);
+  if(c) return "https://maps.google.com/maps?q="+c+"&z=17&output=embed";
+  if(/^https?:\/\//i.test(loc)) return "";
+  return "https://maps.google.com/maps?q="+encodeURIComponent(loc)+"&z=16&output=embed";
+}
+function updatePreview(){
+  const v = $("location").value, e = embedUrl(v), lu = mapUrl(v);
+  $("mapLink").style.display = lu ? "inline-block" : "none";
+  if(lu) $("mapLink").href = lu;
+  if(e){ if($("mapFrame").src!==e) $("mapFrame").src = e; $("mapBox").style.display="block"; $("mapNote").textContent=""; }
+  else {
+    $("mapBox").style.display="none"; $("mapFrame").removeAttribute("src");
+    $("mapNote").textContent = v.trim() ? "این لینک کوتاه است و داخل صفحه نمایش داده نمی‌شود؛ با دکمه «باز کردن در گوگل مپ» ببینید، یا مختصات (مثل 34.5281, 69.1723) وارد کنید." : "";
+  }
+}
+let mapTimer; $("location").addEventListener("input", ()=>{ clearTimeout(mapTimer); mapTimer=setTimeout(updatePreview,600); });
+window.toggleMap = id => {
+  const row = document.getElementById("map_"+id);
+  if(row){ row.remove(); return; }
+  const r = db.find(x=>x.id===id); if(!r) return;
+  const e = embedUrl(r.location), u = mapUrl(r.location);
+  const tr = document.createElement("tr"); tr.id = "map_"+id; tr.className="maprow";
+  tr.innerHTML = `<td colspan="15">${e?`<iframe src="${esc(e)}" loading="lazy" allowfullscreen></iframe>`:`<a href="${esc(u)}" target="_blank" rel="noopener">این لوکیشن داخل صفحه قابل نمایش نیست — در گوگل مپ باز کنید</a>`}</td>`;
+  document.getElementById("row_"+id).after(tr);
+};
+
+function render(){
+  const q = $("search").value.trim().toLowerCase();
+  const list = db.filter(r => !q || Object.values(r).join(" ").toLowerCase().includes(q));
+  $("count").textContent = db.length;
+  $("empty").style.display = list.length ? "none" : "block";
+  $("tbody").innerHTML = list.map((r,i)=>{
+    const u = mapUrl(r.location);
+    return `<tr id="row_${r.id}">
+      <td>${i+1}</td><td>${esc(r.ownerName)}</td><td dir="ltr">${esc(r.ownerPhone)}</td><td>${esc(r.tenantName)}</td>
+      <td>${esc(r.floors)}</td><td>${esc(r.side)}</td><td>${esc(r.town)}</td><td>${esc(r.buildingType)}</td>
+      <td>${esc(r.streetNo)}</td><td>${esc(r.lane)}</td><td dir="ltr">${esc(r.wakilPhone)}</td>
+      <td>${esc(r.address)}</td>
+      <td>${u?`<a href="${esc(u)}" target="_blank" rel="noopener" title="باز کردن در گوگل مپ">📍 <span dir="ltr">${esc(coordsOf(r.location).replace(",", ", ") || "باز کردن لوکیشن")}</span></a><br><button class="light" onclick="toggleMap('${r.id}')">🗺 نمایش نقشه در همین صفحه</button>`:"—"}</td>
+      <td style="white-space:pre-wrap">${esc(r.officer)}</td>
+      <td class="no-print"><button onclick="editRec('${r.id}')">ویرایش</button><button class="light" onclick="delRec('${r.id}')">حذف</button></td>
+    </tr>`;
+  }).join("");
+}
+
+$("form").addEventListener("submit", e=>{
+  e.preventDefault();
+  const rec = {}; fields.forEach(f => rec[f] = $(f).value.trim());
+  const id = $("editId").value;
+  if(id){ const i = db.findIndex(r=>r.id===id); db[i] = {...rec, id}; toast("تغییرات ذخیره شد"); }
+  else { db.push({...rec, id: Date.now().toString(36)+Math.random().toString(36).slice(2,6)}); toast("معلومات ثبت شد"); }
+  save(); resetForm(); render();
+});
+
+function resetForm(){
+  $("form").reset(); $("editId").value=""; updatePreview();
+  $("submitBtn").textContent="ثبت"; $("cancelBtn").style.display="none";
+}
+$("cancelBtn").onclick = resetForm;
+
+window.editRec = id => {
+  const r = db.find(x=>x.id===id); if(!r) return;
+  fields.forEach(f => $(f).value = r[f] || "");
+  updatePreview();
+  $("editId").value = id; $("submitBtn").textContent="ذخیره تغییرات"; $("cancelBtn").style.display="block";
+  window.scrollTo({top:0,behavior:"smooth"});
+};
+window.delRec = id => {
+  if(!confirm("آیا از حذف این رکورد مطمئن هستید؟")) return;
+  db = db.filter(r=>r.id!==id); save(); render(); toast("حذف شد");
+};
+
+$("gpsBtn").onclick = () => {
+  if(!navigator.geolocation) return alert("مرورگر شما GPS را پشتیبانی نمی‌کند.");
+  navigator.geolocation.getCurrentPosition(
+    p => { $("location").value = p.coords.latitude.toFixed(6)+", "+p.coords.longitude.toFixed(6); updatePreview(); toast("موقعیت دریافت شد"); },
+    () => alert("دسترسی به موقعیت ممکن نشد. اجازه دسترسی بدهید یا لینک را دستی وارد کنید.")
+  );
+};
+$("viewMapBtn").onclick = () => { const u = mapUrl($("location").value); u ? window.open(u,"_blank") : alert("ابتدا لوکیشن را وارد کنید."); };
+$("search").oninput = render;
+$("printBtn").onclick = () => window.print();
+
+function download(name, content, type){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([content],{type}));
+  a.download = name; a.click(); URL.revokeObjectURL(a.href);
+}
+$("csvBtn").onclick = () => {
+  const head = ["اسم مالک","تماس مالک","کرایه نشین","تعداد منزل","سمت خانه","شهرک","نوع ساختمان","نمبر کوچه","نمبر گذر","تماس وکیل گذر","آدرس عمومی","لوکیشن","مسؤل ساحه"];
+  const q = v => '"' + String(v??"").replace(/"/g,'""') + '"';
+  const rows = db.map(r => fields.map(f => f==="location" ? mapUrl(r[f]) : r[f]).map(q).join(","));
+  download("sahat-nahia17.csv", "\uFEFF" + [head.map(q).join(","), ...rows].join("\r\n"), "text/csv;charset=utf-8");
+};
+$("jsonBtn").onclick = () => download("sahat-nahia17-backup.json", JSON.stringify(db,null,2), "application/json");
+$("importBtn").onclick = () => $("importFile").click();
+$("importFile").onchange = e => {
+  const f = e.target.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    try {
+      const data = JSON.parse(rd.result);
+      if(!Array.isArray(data)) throw 0;
+      if(confirm("رکوردهای فعلی با نسخه پشتیبان جایگزین شود؟")){ db = data; save(); render(); toast("بازیابی شد"); }
+    } catch(_) { alert("فایل معتبر نیست."); }
+  };
+  rd.readAsText(f); e.target.value="";
+};
+
+render();
+</script>
+</body>
+</html>
